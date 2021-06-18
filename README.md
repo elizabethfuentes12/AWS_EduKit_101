@@ -151,5 +151,84 @@ python registration_helper.py -p <<DEVICE_PORT>>
 
 !["output"](imagen/parte3a.png)
 
-### Parte 4: Crear un objeto en AWS IoT Core con las credenciales del AWS EduKit.
+### Parte 4: Conectemos el AWS EduKit con AWS IoT Core: 
 
+En este capítulo, configurará, creará y actualizará el firmware de su dispositivo, lo que permitirá que su dispositivo se conecte a su red Wi-Fi y a AWS IoT Core. 
+Para conectarse y comunicarse con AWS IoT Core, debe configurar la red wifi a su dispositivo y el endpoint de AWS IoT. 
+
+1. Obten el endpoint de aws iot de tu cuenta con el comando:
+
+```python
+aws iot describe-endpoint --endpoint-type iot:Data-ATS
+```
+Para cerrar presiona ***:q***
+
+Debe ser algo como: 
+
+"xxxxxxxxxxxx-ats.iot.us-east-1.amazonaws.com"
+
+"endpointAddress": "a1w8sdhvrtune7-ats.iot.us-east-1.amazonaws.com"
+
+2. Configuración del firmware ESP32 en el AWS EduKit
+La configuración de su código fuente se maneja a través de Kconfig. Kconfig es el mismo sistema de configuración utilizado por el kernel de Linux y ayuda a simplificar las opciones de configuración disponibles (símbolos) en una estructura de árbol. 
+
+Para hacerlo debes ingresar a PlataformIO, dandole click al logo y abriendo una nueva terminal. 
+
+![Error](imagen/terminal.png)
+
+Y tienes que asegurarte que la terminal este en PlataformIO CLI, de lo contrario no se estara comunicando con nuestro AWS EduKit. 
+
+![Error](imagen/terminal2.png)
+
+Corre los siguientes comandos: 
+
+```python
+cd Core2-for-AWS-IoT-EduKit/Blinky-Hello-World/    
+pio run --environment core2foraws --target menuconfig
+```
+
+***En caso de error***: 
+
+En el caso de ocurrir el error: 
+
+```python
+  File "/Users/elizabethfuentesleone/.platformio/packages/framework-espidf/tools/kconfig_new/menuconfig.py", line 716, in menuconfig
+    locale.setlocale(locale.LC_ALL, "")
+  File "/Users/elizabethfuentesleone/.platformio/python3/lib/python3.9/locale.py", line 610, in setlocale
+    return _setlocale(category, locale)
+locale.Error: unsupported locale setting
+```
+
+Debes abrir el archivo: 
+
+![modificar](imagen/error1.png)
+
+y modificar ***""*** por ***None***
+
+![Error](imagen/error2.png)
+
+Y correr nuevamente. 
+
+3. Establecer la configuracion interna del ESP32 del AWS EduKIt
+
+Una vez finalizado el paso anterior serás capaz de ver la interfaz  Kconfig. En el menú ingresa a ***Component config > Amazon Web Services IoT Plataform*** e ingresa el string del ednpoint obtenido en el ***Paso 1*** y presiona enter.
+
+![Error](imagen/endppoint.png)
+
+Presiona ESC dos veces, ahora ingresa al menu ***AWS IoT EduKit Configuration*** y configura tu WiFi SSID/WiFi PassWord, para editar debes presionar enter. 
+
+***Nota:*** La red WiFi debe ser 2.4GHz, el ESP32 no soporta 5GHz
+
+![Error](imagen/wifi.png)
+
+Salva la configuración presionando la tecla ***s***, confirma el destino con enter y luego presiona la tecla ***q*** para salir. 
+
+4. Construyendo, cargando y monitoreando el firmware Blinky Hello World
+
+Ahora está listo para construir (compilar) y cargar el firmware Blinky Hello World. El proceso es el mismo que con el tutorial de introducción para construir, flashear y monitorear la salida serial:
+
+- Para construir el firmware, corre el siguiente comando (tomará algunos minutos):
+
+```python
+pio run --environment core2foraws
+```
