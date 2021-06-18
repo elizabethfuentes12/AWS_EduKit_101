@@ -102,7 +102,7 @@ Ahora en el menú del lado izquierdo **Seguridad > Certificados**, verás el cer
 
 ---
 
-### Parte 2: Conocer el puerto del EduKit.
+### Parte 2: Instalar el ambiente para interactuar con AWS EduKit.
 
 Para interactuar con nuestro EduKit necesitamos adecuar el ambiente, para lo cual debes instalar el bridge y su traductor.
 
@@ -117,8 +117,6 @@ Sigue el siguiente manual dependiendo del sistema operativo que utilices.
 Copia el puerto del dispositivo ya que lo necesitaras en el próximo paso.
 
 ---
-
-### Parte 3: Activar el EduKit.
 
 ### Parte 3: Obterner el certificado del EduKit.
 
@@ -166,8 +164,6 @@ Para cerrar presiona ***:q***
 Debe ser algo como: 
 
 "xxxxxxxxxxxx-ats.iot.us-east-1.amazonaws.com"
-
-"endpointAddress": "a1w8sdhvrtune7-ats.iot.us-east-1.amazonaws.com"
 
 2. Configuración del firmware ESP32 en el AWS EduKit
 La configuración de su código fuente se maneja a través de Kconfig. Kconfig es el mismo sistema de configuración utilizado por el kernel de Linux y ayuda a simplificar las opciones de configuración disponibles (símbolos) en una estructura de árbol. 
@@ -231,4 +227,15 @@ Ahora está listo para construir (compilar) y cargar el firmware Blinky Hello Wo
 
 ```python
 pio run --environment core2foraws
+```
+- Con la compilación exitosa, es hora de cargar el firmware compilado al dispositivo conectado a través de USB ejecutando el comando:
+
+```python
+pio run --environment core2foraws --target upload
+```
+
+- Por último, supervise la salida en serie del dispositivo en su máquina host a través del siguiente comando:
+
+```python
+pio run --environment core2foraws --target monitor
 ```
