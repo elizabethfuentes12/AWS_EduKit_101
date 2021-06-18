@@ -149,7 +149,4 @@ python registration_helper.py -p <<DEVICE_PORT>>
 ```
 5. Una vez finalizado el script debes buscar los certificados en la carpeta output_files. 
 
-!["output"](imagen/parte3a.png)
-
-### Parte 4: Crear un objeto en AWS IoT Core con las credenciales del AWS EduKit.
 
