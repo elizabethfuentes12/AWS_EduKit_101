@@ -1,9 +1,22 @@
 # IoT con AWS EduKit 101
 Fuente: https://edukit.workshop.aws/en/
 
-En este tutorial se conectara el AWS EduKit a la nube de AWS IoT e intercambiaran mensajes MQTT. 
+En este tutorial se enseñaremos a realizar la comunicación MQTT entre un dispositivo AWS EduKit y AWS IoT Core, abriendo la posibilidad de crear multiples desarrollos juntando las funcionalidades IoT de EduKit con la nube de AWS. 
 
-## ¿Que es un EduKit?: 
+---
+
+## AWS IoT Core 
+
+
+AWS IoT Core es un servicio en la nube administrado que permite a los dispositivos conectados interactuar de manera fácil y segura con las aplicaciones en la nube y otros dispositivos.
+
+!["AWS IoT Core"](imagen/AWS_IoT_Core.png)
+
+[Conoce más sobre AWS IoT Core](https://aws.amazon.com/es/iot-core/?nc=sn&loc=2&dn=3)
+
+---
+
+## AWS EduKit
 
 AWS IoT EduKit es una forma sencilla de aprender a crear aplicaciones de IoT utilizando los servicios de AWS. Entregando una experiencia práctica en la creación de aplicaciones de IoT de punto a punto mediante la combinación de un kit de hardware un conjunto de guías fáciles de seguir y códigos de ejemplos.
 
@@ -50,61 +63,13 @@ AWS proporciona multiples tutoriales para que puedas desarrollar tus habilidades
 - [x] CLI [instalado](https://docs.aws.amazon.com/es_es/cli/latest/userguide/cli-chap-install.html) y [configurado](https://docs.aws.amazon.com/es_es/cli/latest/userguide/cli-configure-sso.html)  
 
 
-### Parte 1: Crear un certificado en AWS IoT Core.
-
-***¿Que es AWS IoT Core?***
-
-AWS IoT Core es un servicio en la nube administrado que permite a los dispositivos conectados interactuar de manera fácil y segura con las aplicaciones en la nube y otros dispositivos.
-
-!["AWS IoT Core"](imagen/AWS_IoT_Core.png)
-
-[Conoce más sobre AWS IoT Core](https://aws.amazon.com/es/iot-core/?nc=sn&loc=2&dn=3)
-
-***Iniciemos***
-
-Vamos al servicio [AWS IoT Core](https://console.aws.amazon.com/iot/home?region=us-east-1#:~:text=alertas%20de%20respuesta-,IoT%20Core,-Conecte%20dispositivos%20a) 
-
-1. Ir al menu Seguridad 
-2. Certificados
-2. Crear
-
-!["Paso 1"](imagen/paso0.png)
-
-En el siguiente paso debes darle Click a **"Crear Certificado"**
-
-El certificado es único por objeto y es la forma segura de interactuar con los servicios de AWS IoT desde los dispositivos, esta debe ser grabada como una clave privada en la memoria de los dispositivos al momento de su programación para que nunca se transfiera a través de Internet junto con las solicitudes, lo que significa una gran ventaja de seguridad.
-
-
- !["Descargar Certificados"](imagen/paso1a.png)
-
- Descargue el certificado y la clave privada para el dispositivo, y también el rootCA 1 . 
-
-!["Descargar CA 1"](imagen/paso1b.png)
-
-- Duplica el archivo de certificado con el siguiente nombre **certificate.pem**
-- Duplica el archivo de privateKey con el siguiente nombre **privateKey.pem**
-- Duplica el archivo de rootCA 1 con el siguiente nombre **rootCA.pem**
-
- Asegurate de presionar el botón de **"Activar"** para que se pueda usar el certificado. 
-
-
-Finaliza el proceso haciendo clic en el botón **"Listo"**. 
-
-El siguiente punto es crear y adjuntar una política al certificado, que autorice al dispositivo autenticado a realizar acciones de IoT en los recursos de AWS IoT.
-
-Para crear la política debes ir al menú del lado izquierdo **Seguridad -> Políticas** una vez ahí debes darle Click a **"Crear una Política"**, para efectos de este ejercicio la nombráremos **objeto1-policity**, completa los campos (Acción, ARN de recurso) con un asterisco **"*"**, esto solo para efectos de este ejercicio, debido a que permite todo, marque la opción Permitir efecto y luego presione el botón **"Crear"**. 
-
-**Nota:** Para un desarrollo en producción real, utilice la definición de política que brinde el mínimo permiso necesario para el funcionamiento del dispositivo (más información: [https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege))
-
-Ahora en el menú del lado izquierdo **Seguridad > Certificados**, verás el certificado que se creó anteriormente, toque los tres puntos de la derecha y elija **Asociar política**, aparecerá una ventana emergente que muestra sus políticas existentes, selecciona la política creada recientemente y asocia, finaliza el proceso con **”Activar”**. 
-
-**¡¡Esto es todo Felicidades!! ya has creado tu primer objeto de AWS IoT con éxito, le has generado un certificado y le has adjuntado una política.**
-
 ---
+## Ejercicio 1
 
-### Parte 2: Instalar el ambiente para interactuar con AWS EduKit.
+### Parte 1 Instalar el ambiente para interactuar con AWS EduKit.
 
-Para interactuar con nuestro EduKit necesitamos adecuar el ambiente, para lo cual debes instalar el bridge y su traductor.
+
+Para interactuar con nuestro EduKit necesitamos adecuar el ambiente, para lo cual debes instalar el bridge y la extensión de desarrollo.
 
 Sigue el siguiente manual dependiendo del sistema operativo que utilices. 
 
@@ -118,19 +83,34 @@ Copia el puerto del dispositivo ya que lo necesitaras en el próximo paso.
 
 ---
 
-### Parte 3: Obterner el certificado del EduKit.
+### Parte 2: Extrae el certificado del AWS EduKit y registralo en AWS IoT Core.
 
-Para crear una conexión segura TLS entre el AWS EduKit y AWS IoT Core a través de MQTT, debe crear un Objeto en AWS IoT Core con las credenciales (clave única) del AWs IoT EduKit. 
+Para crear una conexión segura TLS entre el AWS EduKit y AWS IoT Core a través de MQTT, debe crear un Objeto en AWS IoT Core con las credenciales (clave única) del AWs IoT EduKit, el repositorio que clonamos nos proporciona un programa en python que extrae el certificado del AWS EduKit y crea un objeto en AWS IoT Core al cual le asocia el certificado con las politicas necesarias para establecer la comunicación. 
 
-Para extraer las credenciales del AWS EduKit debemos seguir los siguientes pasos: 
+Para extraer las credenciales del AWS EduKit y registrarlo en AWS IoT Core debemos seguir los siguientes pasos: 
 
-1. En Visual Studio Code, ir a la extensión PlatformIO.
+1. En Visual Studio Code, ir a la extensión PlatformIO dandole click al logo.
+
 2. Ir al menu Open. 
-3. Y abrir el proyecto en la ubicación ***Core2-for-AWS-IoT-EduKit/Blinky-Hello-World***
+
+3. Abrir el proyecto en la ubicación ***Core2-for-AWS-IoT-EduKit/Blinky-Hello-World***
 
 !["Fuente AWS"](imagen/parte3.png)
 
-4. El proyecto tiene incorporado un script en python que te permite extraer las credenciales del AWS EduKit, para correrlo debes correr los siguientes comandos en el terminal del proyecto: 
+4. Abrir una nueva terminal desde PlatformIO. 
+
+![Error](imagen/terminal.png)
+
+5. Revisa los disposivos creados en AWS IoT, para poder comparar al final:
+
+```python
+aws iot list-things
+```
+o en la [consola](https://console.aws.amazon.com/iot/home?region=us-east-1#/)
+
+6. Asegurando que estes en PlatformIO CLI corre los siguientes comandos: 
+
+![Error](imagen/terminal2.png)
 
 ***Ubuntu o macOS***
 
@@ -145,14 +125,20 @@ python3 registration_helper.py -p <<DEVICE_PORT>>
 cd utilities\AWS_IoT_registration_helper\
 python registration_helper.py -p <<DEVICE_PORT>>
 ```
-5. Una vez finalizado el script debes buscar los certificados en la carpeta output_files. 
+5. Verifica que se creo el nuevo objeto en AWS IoT Core. 
 
-!["output"](imagen/parte3a.png)
+```python
+aws iot list-things
+```
 
-### Parte 4: Conectemos el AWS EduKit con AWS IoT Core: 
+[Consola](https://console.aws.amazon.com/iot/home?region=us-east-1#/)
 
-En este capítulo, configurará, creará y actualizará el firmware de su dispositivo, lo que permitirá que su dispositivo se conecte a su red Wi-Fi y a AWS IoT Core. 
-Para conectarse y comunicarse con AWS IoT Core, debe configurar la red wifi a su dispositivo y el endpoint de AWS IoT. 
+---
+
+### Parte 3: Conectemos el AWS EduKit con AWS IoT Core
+
+En este capítulo, configurará, creará y actualizará el firmware de su dispositivo, lo que permitirá que se conecte a la red Wi-Fi y al AWS IoT Core mediante el endpoint. 
+
 
 1. Obten el endpoint de aws iot de tu cuenta con el comando:
 
@@ -166,13 +152,14 @@ Debe ser algo como:
 "xxxxxxxxxxxx-ats.iot.us-east-1.amazonaws.com"
 
 2. Configuración del firmware ESP32 en el AWS EduKit
+
 La configuración de su código fuente se maneja a través de Kconfig. Kconfig es el mismo sistema de configuración utilizado por el kernel de Linux y ayuda a simplificar las opciones de configuración disponibles (símbolos) en una estructura de árbol. 
 
 Para hacerlo debes ingresar a PlataformIO, dandole click al logo y abriendo una nueva terminal. 
 
 ![Error](imagen/terminal.png)
 
-Y tienes que asegurarte que la terminal este en PlataformIO CLI, de lo contrario no se estara comunicando con nuestro AWS EduKit. 
+Asegurate que la terminal este en PlataformIO CLI, de lo contrario no se estara comunicando con nuestro AWS EduKit. 
 
 ![Error](imagen/terminal2.png)
 
@@ -209,8 +196,6 @@ Y correr nuevamente.
 
 Una vez finalizado el paso anterior serás capaz de ver la interfaz  Kconfig. En el menú ingresa a ***Component config > Amazon Web Services IoT Plataform*** e ingresa el string del ednpoint obtenido en el ***Paso 1*** y presiona enter.
 
-![Error](imagen/endppoint.png)
-
 Presiona ESC dos veces, ahora ingresa al menu ***AWS IoT EduKit Configuration*** y configura tu WiFi SSID/WiFi PassWord, para editar debes presionar enter. 
 
 ***Nota:*** La red WiFi debe ser 2.4GHz, el ESP32 no soporta 5GHz
@@ -219,7 +204,10 @@ Presiona ESC dos veces, ahora ingresa al menu ***AWS IoT EduKit Configuration***
 
 Salva la configuración presionando la tecla ***s***, confirma el destino con enter y luego presiona la tecla ***q*** para salir. 
 
-4. Construyendo, cargando y monitoreando el firmware Blinky Hello World
+---
+
+
+## Parte 4: Construyendo, cargando y monitoreando el firmware Blinky Hello World
 
 Ahora está listo para construir (compilar) y cargar el firmware Blinky Hello World. El proceso es el mismo que con el tutorial de introducción para construir, flashear y monitorear la salida serial:
 
@@ -239,3 +227,33 @@ pio run --environment core2foraws --target upload
 ```python
 pio run --environment core2foraws --target monitor
 ```
+
+Donde pide el puerto coloca el copiado en el Paso 1, en mi caso es Mac y deberias ver lo siguiente: 
+
+![Error](imagen/monitor.png)
+
+---
+
+### Parte 5: Monitoriar desde AWS IoT Core: 
+
+La consola de AWS IoT Core le permite ver y publicar mensajes MQTT. 
+
+Para comenzar, ve a la consola de AWS IoT y elija Prueba --> Cliente de prueba de MQTT.
+
+![Error](imagen/prueba.png)
+
+En el campo de prueba ingresa el ID desl dispositivo:
+
+![Error](imagen/filtro.png)
+
+En el campo subscribirse al tema:
+
+![Error](imagen/tema.png)
+
+Presiona Subscribir y si el dispositivo esta transmitiendo seras capaz de ver los mensajes. 
+
+***¡¡Felicidades!! ya tienes tu EduKit conectado a la nube de AWS!!!***
+
+## Ejercicio 2
+
+En este ejercicio, se configurará el termostato integrado en el AWS EduKit, el cual informará la temperatura ambiente y el nivel de ruido. También configurará una aplicación serveless que escuchará las mediciones, determinará el estado en el que se debe configurar el termostato y enviará comandos al dispositivo que le indicara que hacer.
