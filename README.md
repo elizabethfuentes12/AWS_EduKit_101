@@ -86,7 +86,7 @@ Copia el puerto del dispositivo ya que lo necesitaras en el próximo paso.
 
 ### Parte 2: Extrae el certificado del AWS EduKit y registralo en AWS IoT Core.
 
-Para crear una conexión segura TLS entre el AWS EduKit y AWS IoT Core a través de MQTT, debe crear un Objeto en AWS IoT Core con las credenciales (clave única) del AWs IoT EduKit, el repositorio que clonamos nos proporciona un programa en python que extrae el certificado del AWS EduKit y crea un objeto en AWS IoT Core al cual le asocia el certificado con las politicas necesarias para establecer la comunicación. 
+Para crear una conexión segura TLS entre el AWS EduKit y AWS IoT Core a través de MQTT, debe crear un Objeto en AWS IoT Core con el certificado (clave única) del AWs IoT EduKit, el repositorio que clonamos nos proporciona un programa en python que extrae el certificado del AWS EduKit y crea un objeto en AWS IoT Core al cual le asocia el certificado con las politicas necesarias para establecer la comunicación. 
 
 Para extraer las credenciales del AWS EduKit y registrarlo en AWS IoT Core debemos seguir los siguientes pasos: 
 
