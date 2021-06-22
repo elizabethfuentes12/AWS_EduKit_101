@@ -257,8 +257,5 @@ Presiona Subscribir y si el dispositivo esta transmitiendo seras capaz de ver lo
 
 ---
 
-## Ejercicio 2: Configura el Smart Termostato en el EduKit
-
+## Si quiere realizar más actividades con EduKit te invito a completar el WorkShop de AWS --> https://edukit.workshop.aws/en/
 ---
-
-En este ejercicio, se configurará el termostato integrado en el AWS EduKit, el cual informará la temperatura ambiente y el nivel de ruido. También configurará una aplicación serveless que escuchará las mediciones, determinará el estado en el que se debe configurar el termostato y enviará comandos al dispositivo que le indicara que hacer.
