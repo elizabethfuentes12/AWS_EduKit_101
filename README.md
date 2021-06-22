@@ -243,7 +243,7 @@ Para comenzar, ve a la consola de AWS IoT y elija Prueba --> Cliente de prueba d
 
 ![Error](imagen/prueba.png)
 
-En el campo de prueba ingresa el ID desl dispositivo:
+En el campo de prueba ingresa el ID del dispositivo de esta forma ***0123331be471ac3f01/#***:
 
 ![Error](imagen/filtro.png)
 
