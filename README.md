@@ -1,7 +1,8 @@
 # IoT con AWS EduKit 101
-Fuente: https://edukit.workshop.aws/en/
 
 En este tutorial se enseñaremos a realizar la comunicación MQTT entre un dispositivo AWS EduKit y AWS IoT Core, abriendo la posibilidad de crear multiples desarrollos juntando las funcionalidades IoT de EduKit con la nube de AWS. 
+
+Esta basado en CLOUD CONNECTED BLINKY del workshop de AWS Edukit https://edukit.workshop.aws/en/
 
 ---
 
@@ -9,6 +10,8 @@ En este tutorial se enseñaremos a realizar la comunicación MQTT entre un dispo
 
 
 AWS IoT Core es un servicio en la nube administrado que permite a los dispositivos conectados interactuar de manera fácil y segura con las aplicaciones en la nube y otros dispositivos.
+
+Los mensajes son transmitidos y recibidos utilizando el protocolo MQTT ([Message Queueing Telemetry Transport](https://mqtt.org/)) que reduce el uso del ancho de banda.
 
 !["AWS IoT Core"](imagen/AWS_IoT_Core.png)
 
@@ -34,7 +37,7 @@ Bluetooth 4.2
 
 flash de 16 M
 
-Microchip ATECC608 Trust&GO
+[Microchip ATECC608 Trust&GO](https://aws.amazon.com/es/blogs/apn/implementing-secure-authentication-with-aws-iot-and-microchips-trust-platform/)
 
 Pantalla táctil
 
@@ -64,8 +67,6 @@ AWS proporciona multiples tutoriales para que puedas desarrollar tus habilidades
 
 
 ---
-## Ejercicio 1
-
 ### Parte 1 Instalar el ambiente para interactuar con AWS EduKit.
 
 
@@ -108,7 +109,7 @@ aws iot list-things
 ```
 o en la [consola](https://console.aws.amazon.com/iot/home?region=us-east-1#/)
 
-6. Asegurando que estes en PlatformIO CLI corre los siguientes comandos: 
+6. Asegurando que estes en PlatformIO CLI y en la carpeta ***Core2-for-AWS-IoT-EduKit/Blinky-Hello-World/*** corre los siguientes comandos con el DEVICE que copiaste en el ***Paso 1***: 
 
 ![Error](imagen/terminal2.png)
 
@@ -254,6 +255,10 @@ Presiona Subscribir y si el dispositivo esta transmitiendo seras capaz de ver lo
 
 ***¡¡Felicidades!! ya tienes tu EduKit conectado a la nube de AWS!!!***
 
-## Ejercicio 2
+---
+
+## Ejercicio 2: Configura el Smart Termostato en el EduKit
+
+---
 
 En este ejercicio, se configurará el termostato integrado en el AWS EduKit, el cual informará la temperatura ambiente y el nivel de ruido. También configurará una aplicación serveless que escuchará las mediciones, determinará el estado en el que se debe configurar el termostato y enviará comandos al dispositivo que le indicara que hacer.
